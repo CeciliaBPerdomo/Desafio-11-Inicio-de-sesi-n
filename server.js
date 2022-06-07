@@ -7,6 +7,7 @@ npm i express-session
 npm i connect-mongo --save
 npm i passport
 npm i passport-local
+npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
