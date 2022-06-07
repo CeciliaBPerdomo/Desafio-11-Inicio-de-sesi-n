@@ -11,6 +11,7 @@ npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
+const usuario = require('./controller/usuariosMongoDB')
 
 const passport = require('passport')
 const { Strategy: LocalStrategy } = require('passport-local')
@@ -135,15 +136,16 @@ io.on('connection', function(socket){
 app.post('/login', (req, res) => {
     let usuario = req.body.usuario
     let contras = req.body.password
-    req.session.usuario = usuario
-    req.session.password = contras
     console.log('Usuario: ', usuario, '. Contraseña: ', contras)
     res.redirect('/')
 })
 
-app.get('/logout', (req, res) => {
-    req.logout()
-    res.redirect('/')
+app.post('/logout', (req, res) => {
+    //session destroy
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+      })
 })
 
 const PORT = process.env.PORT || 8080
