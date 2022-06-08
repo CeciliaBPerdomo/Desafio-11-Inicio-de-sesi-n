@@ -11,10 +11,17 @@ const usuarioSchema = new mongoose.Schema({
 
 const model = mongoose.model('usuarios', usuarioSchema)
 
-export default class Usuario extends mongoDB {
+class Usuario extends mongoDB {
     constructor(connection) {
         super(connection)
     }
 
     listarUsuarios = async = () => {return model.find({})}
+
+    buscarXNombre = async = (usuario) => {
+        const result = model.find({'userName': usuario})
+        return result
+    }
 }
+
+module.exports = Usuario

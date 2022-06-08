@@ -1,4 +1,4 @@
-export default class basicMongoDb {
+class basicMongoDb {
     constructor(connection) {
         if (!process.env.MONGO_CONNECT) {
             this.connect = connection()
@@ -6,3 +6,5 @@ export default class basicMongoDb {
         }
     }
 }
+
+module.exports = basicMongoDb

@@ -11,7 +11,7 @@ npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
-const usuario = require('./controller/usuariosMongoDB')
+const usuarioReg  = require('./controller/usuariosMongoDB')
 
 const passport = require('passport')
 const { Strategy: LocalStrategy } = require('passport-local')
@@ -98,14 +98,14 @@ app.get('/', (req, res) => {
         {nombre: 'Regla', precio: 10, foto: "https://image.shutterstock.com/image-vector/school-measuring-plastic-ruler-20-260nw-615662024.jpg"}, 
         {nombre: 'Compás', precio: 20, foto: "https://thumbs.dreamstime.com/b/comp%C3%A1s-de-dibujo-aislado-rojo-132996590.jpg"}
     ]
-    const usuario = req.session.usuario
+    /*const usuario = req.session.usuario
     try{
         if(req.session.usuario) {
             res.render('productos', { productos, usuario})
         } else {
             res.sendFile(__dirname + '/public/registrarse.html')
         }
-    } catch (error){ console.log(error) }
+    } catch (error){ console.log(error) }*/
     
 })
 
@@ -136,8 +136,12 @@ io.on('connection', function(socket){
 app.post('/login', (req, res) => {
     let usuario = req.body.usuario
     let contras = req.body.password
-    console.log('Usuario: ', usuario, '. Contraseña: ', contras)
+   /* if (usuarioReg.buscarxNombre(usuario)){
+        res.redirect('/')
+    }*/
     res.redirect('/')
+    console.log('Usuario: ', usuario, '. Contraseña: ', contras)
+    
 })
 
 app.post('/logout', (req, res) => {
