@@ -1,6 +1,7 @@
 const res = require('express/lib/response')
 const mongoose = require('mongoose')
 const mongoDB = require('../db/dbMongo')
+const config = require('../src/config')
 
 const usuarioSchema = new mongoose.Schema({
     usuario: {
@@ -12,12 +13,15 @@ const usuarioSchema = new mongoose.Schema({
 
 const model = mongoose.model('usuarios', usuarioSchema)
 
+const db = async() => {
+    return await mongoose.connect(config.mongoDB.url, config.mongoDB.options)
+}
 class usuarioReg extends mongoDB {
-    constructor(connection) {
-        super(connection)
+    constructor(db) {
+        super(db)
     }
 
-    listarUsuarios = async = () => {return model.find({})}
+    listarUsuarios = async() => {return model.find({})}
 
     buscarXNombre = async(usuario) => {
         const result = model.find({'userName': usuario})
@@ -25,4 +29,4 @@ class usuarioReg extends mongoDB {
     }
 }
 
-module.exports = usuarioReg
+module.exports = new usuarioReg(db)

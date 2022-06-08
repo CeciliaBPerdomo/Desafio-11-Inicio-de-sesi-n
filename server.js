@@ -135,7 +135,7 @@ io.on('connection', function(socket){
 app.post('/login', async (req, res) => {
     let usuario = req.body.usuario
     let contras = req.body.password
-    //const user = await usuarioReg()buscarxNombre(usuario)
+    const user = await usuarioReg.buscarxNombre(usuario)
     //res.redirect('/')
     console.log('Usuario: ', usuario, '. Contraseña: ', contras)
     
