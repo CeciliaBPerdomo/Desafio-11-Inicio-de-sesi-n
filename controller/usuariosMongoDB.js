@@ -1,3 +1,4 @@
+const res = require('express/lib/response')
 const mongoose = require('mongoose')
 const mongoDB = require('../db/dbMongo')
 
@@ -11,17 +12,17 @@ const usuarioSchema = new mongoose.Schema({
 
 const model = mongoose.model('usuarios', usuarioSchema)
 
-class Usuario extends mongoDB {
+class usuarioReg extends mongoDB {
     constructor(connection) {
         super(connection)
     }
 
     listarUsuarios = async = () => {return model.find({})}
 
-    buscarXNombre = async = (usuario) => {
+    buscarXNombre = async(usuario) => {
         const result = model.find({'userName': usuario})
-        return result
+        return result[0]
     }
 }
 
-module.exports = Usuario
+module.exports = usuarioReg

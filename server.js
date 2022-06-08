@@ -11,7 +11,7 @@ npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
-const usuarioReg  = require('./controller/usuariosMongoDB')
+const { usuarioReg }  = require('./controller/usuariosMongoDB')
 
 const passport = require('passport')
 const { Strategy: LocalStrategy } = require('passport-local')
@@ -80,6 +80,7 @@ let messages = []
 const productos = []
 
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'))
 app.set('views', './views')
 app.set('view engine', 'ejs')
 
@@ -115,8 +116,6 @@ app.post('/productos', (req, res) => {
     res.redirect('/')
 })
 
-app.use(express.static('public'))
-
 io.on('connection', function(socket){
     console.log('Un cliente se ha conectado')
     /* Emitir todos los mensajes a un cliente nuevo */
@@ -133,13 +132,11 @@ io.on('connection', function(socket){
 
 
 /* Login */ 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     let usuario = req.body.usuario
     let contras = req.body.password
-   /* if (usuarioReg.buscarxNombre(usuario)){
-        res.redirect('/')
-    }*/
-    res.redirect('/')
+    //const user = await usuarioReg()buscarxNombre(usuario)
+    //res.redirect('/')
     console.log('Usuario: ', usuario, '. Contraseña: ', contras)
     
 })
