@@ -5,9 +5,9 @@ const config = require('../src/config')
 
 const usuarioSchema = new mongoose.Schema({
     usuario: {
-        id: {type: String, required: true, max: 4, index: true}, 
-        userName: {type: String, required: true, max: 100}, 
-        password: {type: String, required: true, max: 100} 
+        //id: {type: String, required: true, max: 4, index: true}, 
+        usuario: {type: String},//, required: true, max: 100}, 
+        password: {type: String}//, required: true, max: 100} 
     }
 })
 
@@ -24,9 +24,15 @@ class usuarioReg extends mongoDB {
     listarUsuarios = async() => {return model.find({})}
 
     buscarXNombre = async(usuario) => {
-        const result = model.find({'userName': usuario})
+        const result = model.find({'usuario': usuario})
         return result[0]
+    }
+    
+    guardar = async(usuario) => {
+        console.log(usuario)
+        const nuevoUsuario = new model(usuario)
+        await nuevoUsuario.save()
     }
 }
 
-module.exports = new usuarioReg(db)
+module.exports = usuarioReg

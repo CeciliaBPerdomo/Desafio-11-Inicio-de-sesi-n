@@ -11,7 +11,8 @@ npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
-const { usuarioReg }  = require('./controller/usuariosMongoDB')
+const usuarioReg  = require('./controller/usuariosMongoDB')
+const newUser = new usuarioReg()
 
 const passport = require('passport')
 const { Strategy: LocalStrategy } = require('passport-local')
@@ -135,10 +136,19 @@ io.on('connection', function(socket){
 app.post('/login', async (req, res) => {
     let usuario = req.body.usuario
     let contras = req.body.password
-    const user = await usuarioReg.buscarxNombre(usuario)
+    const user = await newUser.buscarXNombre(usuario)
     //res.redirect('/')
     console.log('Usuario: ', usuario, '. Contraseña: ', contras)
+    if (!user){
+        console.log('Usuario no registrado')
+        res.redirect('registrarse.html')
+    }
     
+})
+
+app.post('/registrarse', async(req, res) => {
+    res.json(await newUser.guardar(req.body))
+    res.redirect('/')
 })
 
 app.post('/logout', (req, res) => {
