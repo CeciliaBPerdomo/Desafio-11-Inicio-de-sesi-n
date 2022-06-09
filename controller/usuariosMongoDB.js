@@ -4,11 +4,11 @@ const mongoDB = require('../db/dbMongo')
 const config = require('../src/config')
 
 const usuarioSchema = new mongoose.Schema({
-    usuario: {
+    //usuario: {
         //id: {type: String, required: true, max: 4, index: true}, 
         usuario: {type: String},//, required: true, max: 100}, 
         password: {type: String}//, required: true, max: 100} 
-    }
+    //}
 })
 
 const model = mongoose.model('usuarios', usuarioSchema)
