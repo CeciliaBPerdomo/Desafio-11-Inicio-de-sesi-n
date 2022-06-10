@@ -11,7 +11,7 @@ npm i mongoose
 */
 const express = require('express')
 const session = require('express-session')
-const usuarioReg  = require('./controller/usuariosMongoDB')
+const {usuarioReg, model}  = require('./controller/usuariosMongoDB')
 const newUser = new usuarioReg()
 
 const passport = require('passport')
@@ -39,20 +39,24 @@ passport.use('registrarse', new LocalStrategy({
     return done(null, user)
 }))
 
-passport.use('login', new LocalStrategy((username, password, done) => {
-    const user = usuarios.find(usuario => usuarios.username == username)
-    if (!user){ return done (null, false) }
-    if (user.password != password) { return done (null, false) }
-    user.contador = 0
-    return done(null, user)
+passport.use('login', new LocalStrategy.Strategy({
+    usernameField: "usuario",
+    passwordField: "password",
+    passReqToCallback: true
+}, async (req, usuario, password, done) => {
+    const user = await model.findOne({usuario})
+    if(!user){
+        return done(null, false)
+    }
+    done(null, user)
 }))
 
 passport.serializeUser(function (user, done){
-    done(null, username)
+    done(null, user)
 })
 
-passport.deserializeUser(function(username, done){
-    const usuario = usuarios.find(usuario => usuarios.username == username)
+passport.deserializeUser( async function(username, done){
+    const usuario = await model.findOne({username})
     done(null, usuario)
 })
 
@@ -99,16 +103,7 @@ app.get('/', (req, res) => {
         {nombre: 'Escuadra', precio: 20, foto: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Squadra_45.jpg/640px-Squadra_45.jpg"}, 
         {nombre: 'Regla', precio: 10, foto: "https://image.shutterstock.com/image-vector/school-measuring-plastic-ruler-20-260nw-615662024.jpg"}, 
         {nombre: 'Compás', precio: 20, foto: "https://thumbs.dreamstime.com/b/comp%C3%A1s-de-dibujo-aislado-rojo-132996590.jpg"}
-    ]
-    /*const usuario = req.session.usuario
-    try{
-        if(req.session.usuario) {
-            res.render('productos', { productos, usuario})
-        } else {
-            res.sendFile(__dirname + '/public/registrarse.html')
-        }
-    } catch (error){ console.log(error) }*/
-    
+    ]    
 })
 
 app.post('/productos', (req, res) => {
@@ -133,24 +128,18 @@ io.on('connection', function(socket){
 
 
 /* Login */ 
-app.post('/login', async (req, res) => {
-    let usuario = req.body.usuario
-    let contras = req.body.password
-    const user = await newUser.buscarXNombre(usuario)
-    //res.redirect('/')
-    console.log('Usuario: ', usuario, '. Contraseña: ', contras)
-    if (!user){
-        console.log('Usuario no registrado')
-        res.redirect('registrarse.html')
-    }
-    
+app.post('/login', passport.authenticate("login", {successRedirect: "/home", failureRedirect: "/registrarse", passReqToCallback: true}))
+app.get('/registrarse', (req, res)=>{
+    res.redirect('registrarse.html')
 })
-
 app.post('/registrarse', async(req, res) => {
-    res.json(await newUser.guardar(req.body))
+   await newUser.guardar(req.body)
     res.redirect('/')
 })
-
+app.get('/home', (req,res)=>{
+    const { user: usuario } = req.session.passport
+    res.render('productos', {usuario, productos})
+} )
 app.post('/logout', (req, res) => {
     //session destroy
     req.logout(function(err) {

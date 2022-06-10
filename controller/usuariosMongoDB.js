@@ -16,6 +16,7 @@ const model = mongoose.model('usuarios', usuarioSchema)
 const db = async() => {
     return await mongoose.connect(config.mongoDB.url, config.mongoDB.options)
 }
+db()
 class usuarioReg extends mongoDB {
     constructor(db) {
         super(db)
@@ -35,4 +36,4 @@ class usuarioReg extends mongoDB {
     }
 }
 
-module.exports = usuarioReg
+module.exports = {usuarioReg, model}
